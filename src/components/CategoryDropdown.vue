@@ -22,6 +22,23 @@
 import { ref, computed } from 'vue'
 import recipes from '../assets/recipes.json'
 
+interface Material {
+  [key: string]: number
+}
+
+interface Recipe {
+  생산량: number
+  재료: Material
+}
+
+interface SubCategory {
+  [key: string]: Recipe
+}
+
+interface MainCategory {
+  [key: string]: SubCategory
+}
+
 const props = defineProps<{
   categories: string[]
 }>()
@@ -35,7 +52,7 @@ const selectedSubCategory = ref('')
 
 const subCategories = computed(() => {
   if (!selectedMainCategory.value) return []
-  return Object.keys(recipes[selectedMainCategory.value] || {})
+  return Object.keys((recipes as unknown as MainCategory)[selectedMainCategory.value] || {})
 })
 
 const onMainCategoryChange = () => {
@@ -70,4 +87,4 @@ select:disabled {
   background-color: #f5f5f5;
   cursor: not-allowed;
 }
-</style> 
+</style>

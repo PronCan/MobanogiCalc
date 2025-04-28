@@ -4,12 +4,8 @@
       카테고리를 선택해주세요
     </div>
     <div v-else class="items-grid">
-      <div 
-        v-for="(item, itemName) in items" 
-        :key="itemName" 
-        class="item-card"
-        @click="selectItem(itemName, item)"
-      >
+      <div v-for="(item, itemName) in items" :key="itemName" class="item-card"
+        @click="selectItem(itemName as string, item)">
         <div class="item-name">{{ itemName }}</div>
         <div class="item-info">생산량: {{ item.생산량 }}개</div>
       </div>
@@ -22,13 +18,13 @@ interface Material {
   [key: string]: number
 }
 
-interface Item {
+interface Recipe {
   생산량: number
   재료: Material
 }
 
 interface Items {
-  [key: string]: Item
+  [key: string]: Recipe
 }
 
 const props = defineProps<{
@@ -36,10 +32,10 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'item-select', name: string, details: Item): void
+  (e: 'item-select', name: string, details: Recipe): void
 }>()
 
-const selectItem = (name: string, details: Item) => {
+const selectItem = (name: string, details: Recipe) => {
   emit('item-select', name, details)
 }
 </script>
@@ -83,4 +79,4 @@ const selectItem = (name: string, details: Item) => {
   font-size: 0.9rem;
   color: #666;
 }
-</style> 
+</style>

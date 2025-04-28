@@ -1,18 +1,9 @@
 <template>
   <div class="calculator">
     <h1>모바노기 계산기</h1>
-    <CategoryDropdown 
-      :categories="mainCategories" 
-      @category-change="handleCategoryChange"
-    />
-    <ItemList 
-      :items="currentItems" 
-      @item-select="handleItemSelect"
-    />
-    <ItemCalculator 
-      :item-name="selectedItemName"
-      :selected-item="selectedItem"
-    />
+    <CategoryDropdown :categories="mainCategories" @category-change="handleCategoryChange" />
+    <ItemList :items="currentItems" @item-select="handleItemSelect" />
+    <ItemCalculator :item-name="selectedItemName" :selected-item="selectedItem" />
   </div>
 </template>
 
@@ -23,15 +14,32 @@ import ItemList from '../components/ItemList.vue'
 import ItemCalculator from '../components/ItemCalculator.vue'
 import recipes from '../assets/recipes.json'
 
-const mainCategories = Object.keys(recipes)
+interface Material {
+  [key: string]: number
+}
+
+interface Recipe {
+  생산량: number
+  재료: Material
+}
+
+interface SubCategory {
+  [key: string]: Recipe
+}
+
+interface MainCategory {
+  [key: string]: SubCategory
+}
+
+const mainCategories = Object.keys(recipes as unknown as MainCategory)
 const selectedMainCategory = ref('')
 const selectedSubCategory = ref('')
 const selectedItemName = ref('')
-const selectedItem = ref(null)
+const selectedItem = ref<Recipe | null>(null)
 
 const currentItems = computed(() => {
   if (!selectedMainCategory.value || !selectedSubCategory.value) return {}
-  return recipes[selectedMainCategory.value][selectedSubCategory.value] || {}
+  return (recipes as unknown as MainCategory)[selectedMainCategory.value][selectedSubCategory.value] || {}
 })
 
 const handleCategoryChange = (mainCategory: string, subCategory: string) => {
@@ -41,7 +49,7 @@ const handleCategoryChange = (mainCategory: string, subCategory: string) => {
   selectedItem.value = null
 }
 
-const handleItemSelect = (name: string, details: any) => {
+const handleItemSelect = (name: string, details: Recipe) => {
   selectedItemName.value = name
   selectedItem.value = details
 }
@@ -58,4 +66,4 @@ h1 {
   text-align: center;
   margin-bottom: 2rem;
 }
-</style> 
+</style>
